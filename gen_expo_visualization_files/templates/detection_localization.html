@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>MTG Hashing Expo - Detection & Localization</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Chakra+Petch:wght@400;500;600;700&family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body data-mode="adult" class="localization-page">
+  <div class="bg-layer bg-layer-a"></div>
+  <div class="bg-layer bg-layer-b"></div>
+  <div class="bg-grid"></div>
+
+  <header class="hero hero-adult">
+    <div class="hero-orb orb-a"></div>
+    <div class="hero-orb orb-b"></div>
+    <div class="hero-top">
+      <div>
+        <p id="kickerText" class="kicker">Magic: The Gathering Detection Stages</p>
+        <h1 id="heroTitle">Detection & Localization</h1>
+      </div>
+      <div class="hero-nav-stack">
+        <nav class="page-nav" aria-label="Page navigation">
+          <a id="mainPageLink" class="mode-link" href="/">Main Dashboard</a>
+          <a id="localizationPageLink" class="mode-link active" href="/detection-localization">Detection & Localization</a>
+        </nav>
+        <nav class="mode-nav" aria-label="Language navigation">
+          <button id="langEnBtn" class="mode-link active" type="button">EN</button>
+          <button id="langFrBtn" class="mode-link" type="button">FR</button>
+        </nav>
+      </div>
+    </div>
+    <p id="heroSubText" class="hero-sub">
+      Visual checkpoints for YOLO detection, contrast masks, axis + side guides, and the final card crop used for identification.
+    </p>
+    <div class="hero-actions">
+      <button id="updateBtn" class="btn-primary">Update Example</button>
+      <div class="status-pill"><span class="dot"></span><span id="statusText">Waiting for a matched card...</span></div>
+    </div>
+  </header>
+
+  <main class="dashboard localization-dashboard">
+    <section class="panel localization-summary">
+      <div class="panel-header">
+        <h2 id="summaryTitle">Latest Detection Snapshot</h2>
+        <span id="yoloConfidenceBadge" class="price-badge">YOLO Confidence: -</span>
+      </div>
+      <p id="summaryHint" class="hint">Press Update Example to sync these localization visuals with the latest successful card match.</p>
+    </section>
+
+    <section class="localization-grid">
+      <article class="panel localization-card">
+        <div class="panel-header">
+          <h2 id="locATitle">A) YOLO Guess</h2>
+        </div>
+        <p id="locASub" class="hint">Full YOLO box with confidence details when available.</p>
+        <figure class="visual-card camera-source localization-figure">
+          <img id="locAImg" alt="YOLO full box guess" />
+        </figure>
+      </article>
+
+      <article class="panel localization-card">
+        <div class="panel-header">
+          <h2 id="locBTitle">B) Contrast Masked Boxes</h2>
+        </div>
+        <p id="locBSub" class="hint">Top and bottom contrast masks with no extra guide lines.</p>
+        <figure class="visual-card camera-source localization-figure">
+          <img id="locBImg" alt="Contrast mask boxes" />
+        </figure>
+      </article>
+
+      <article class="panel localization-card">
+        <div class="panel-header">
+          <h2 id="locCTitle">C) Axis + Side Guesses</h2>
+        </div>
+        <p id="locCSub" class="hint">Pre-crop axis and side bounds forming the exact crop box.</p>
+        <figure class="visual-card camera-source localization-figure">
+          <img id="locCImg" alt="Axis and side bound previews" />
+        </figure>
+      </article>
+
+      <article class="panel localization-card">
+        <div class="panel-header">
+          <h2 id="locDTitle">D) Final Cropped Image</h2>
+        </div>
+        <p id="locDSub" class="hint">Final cropped card image sent to identification.</p>
+        <figure class="visual-card camera-source localization-figure">
+          <img id="locDImg" alt="Final cropped card" />
+        </figure>
+      </article>
+    </section>
+  </main>
+
+  <script src="{{ url_for('static', filename='detection_localization.js') }}"></script>
+</body>
+</html>

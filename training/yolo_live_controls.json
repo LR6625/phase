@@ -1,0 +1,8 @@
+{
+  "roi_shift_x": 0.06,
+  "roi_shift_y": 0.0,
+  "roi_expand_left": 0.044,
+  "roi_expand_right": 0.041,
+  "roi_expand_up": 0.062,
+  "roi_expand_down": 0.017
+}

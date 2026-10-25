@@ -1,0 +1,38 @@
+﻿TOTAL=35 READY=29 NOT_READY=6
+---READY---
+Aeromunculus [rna]
+Aethertow [mm3]
+Awaken The Sleeper [one]
+Bronzebeak Moa [mm3]
+Carnage Gladiator [mm3]
+Cement Shoes [snc]
+Corrupt Court Official [snc]
+Divination [m19]
+Dread Presence [m20]
+Famished Worldsire [eoe]
+Festerhide Boar [isd]
+Gray Merchant Of Asphodel [ths]
+Griselbrand [avr]
+Ground Assault [mm3]
+Lumithread Field [fut]
+Mukotai Ambusher [neo]
+Okiba Salvage [neo]
+Orzhov Guildgate [c18]
+Phyrexian Battleflies [inv]
+Piper Of The Swarm [eld]
+Renegade Freighter [kld]
+Requiem Monolith [eoe]
+Scuttlegator [rna]
+Skulking Killer [vow]
+Sparktongue Dragon [m19]
+Terminal Velocity [eoe]
+Vraska The Unseen [rtr]
+Wary Okapi [grn]
+Witness Of The Ages [ktk]
+---NOT_READY---
+Ghalta Primal Hunger [plst] full=False segmented=False
+Haliya Ascendant Cadet [eoe] full=False segmented=False
+Mmmenon Uthros Exile [eoe] full=False segmented=False
+Rune Scarred Demon [m12] full=False segmented=False
+Woodcutters Grit [emn] full=False segmented=False
+Xu Ifit Osteoharmonist [eoe] full=False segmented=False

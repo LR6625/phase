@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MTG Card Hash Visualization</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🃏 Magic: The Gathering Card Recognition</h1>
+            <h2>Live Hash Visualization from OhMyOhMy.py</h2>
+            <p class="subtitle">Process a card in OhMyOhMy.py, then click "Refresh" to see the visualization</p>
+        </header>
+
+        <main>
+            <!-- Control Section -->
+            <section class="control-section">
+                <div class="button-group">
+                    <button class="btn btn-primary" id="refreshBtn">🔄 Refresh Data</button>
+                    <button class="btn btn-secondary" id="clearBtn">🗑️ Clear</button>
+                </div>
+                <div class="status-indicator" id="statusIndicator">
+                    <span class="dot"></span>
+                    <span id="statusText">Waiting for data from OhMyOhMy.py...</span>
+                </div>
+            </section>
+
+            <!-- Loading State -->
+            <div id="loadingState" class="loading-state hidden">
+                <div class="spinner"></div>
+                <p>Loading visualization...</p>
+            </div>
+
+            <!-- Error State -->
+            <div id="errorState" class="error-state hidden">
+                <h3>⚠️ No Data Available</h3>
+                <p id="errorMessage">Run OhMyOhMy.py to process a card and send it to this server.</p>
+                <button class="btn btn-secondary" onclick="clearError()">Dismiss</button>
+            </div>
+
+            <!-- Results Section -->
+            <section id="resultsSection" class="results-section hidden">
+                
+                <!-- Status Cards -->
+                <div class="status-cards">
+                    <div class="status-card">
+                        <h4>Hamming Distance</h4>
+                        <div class="big-number" id="hammingDistance">-</div>
+                        <small>bits different (0-64)</small>
+                    </div>
+                    <div class="status-card">
+                        <h4>Similarity</h4>
+                        <div class="big-number" id="similarity">-</div>
+                        <small>perceptual match</small>
+                    </div>
+                    <div class="status-card">
+                        <h4>Quality</h4>
+                        <div class="big-number quality-text" id="quality">-</div>
+                        <small>match quality</small>
+                    </div>
+                </div>
+
+                <!-- Tabs -->
+                <div class="tabs">
+                    <button class="tab-button active" data-tab="overview">Overview</button>
+                    <button class="tab-button" data-tab="hashing">Hash Details</button>
+                    <button class="tab-button" data-tab="comparison">Hash Comparison</button>
+                    <button class="tab-button" data-tab="cardinfo">Card Info</button>
+                </div>
+
+                <!-- Tab Contents -->
+                
+                <!-- Overview Tab -->
+                <div id="overview-tab" class="tab-content active">
+                    <div class="two-column">
+                        <div class="column">
+                            <h3>Detected Card</h3>
+                            <img id="detectedImage" src="" alt="Detected card">
+                        </div>
+                        <div class="column">
+                            <h3>Processed Input</h3>
+                            <img id="inputImage" src="" alt="Processed input">
+                        </div>
+                    </div>
+                    
+                    <div class="info-box">
+                        <h3>📋 Match Information</h3>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <label>Card Name:</label>
+                                <strong id="cardName">-</strong>
+                            </div>
+                            <div class="info-item">
+                                <label>Set:</label>
+                                <strong id="cardSet">-</strong>
+                            </div>
+                            <div class="info-item">
+                                <label>Rarity:</label>
+                                <strong id="cardRarity">-</strong>
+                            </div>
+                            <div class="info-item">
+                                <label>Orientation:</label>
+                                <strong id="orientation">-</strong>
+                            </div>
+                            <div class="info-item">
+                                <label>Input Hash:</label>
+                                <code id="inputHash">-</code>
+                            </div>
+                            <div class="info-item">
+                                <label>Matched Hash:</label>
+                                <code id="matchedHash">-</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hashing Details Tab -->
+                <div id="hashing-tab" class="tab-content">
+                    <div class="info-box">
+                        <h3>🔐 Perceptual Hash Visualization</h3>
+                        <p class="explanation">
+                            The image is resized to 8×8 pixels and converted to grayscale. Each pixel is compared to the 
+                            average brightness to create a 64-bit binary hash. This hash is robust against minor image changes 
+                            like compression or slight color shifts.
+                        </p>
+                        <img id="hashVisualization" src="" alt="Hash visualization" class="full-width-img">
+                    </div>
+                </div>
+
+                <!-- Hash Comparison Tab -->
+                <div id="comparison-tab" class="tab-content">
+                    <div class="info-box">
+                        <h3>⚖️ Hash Comparison & Difference</h3>
+                        <p class="explanation">
+                            The XOR (exclusive OR) operation compares both hashes bit-by-bit. Red areas show differing bits, 
+                            while green shows matching bits. The Hamming distance is the total number of differing bits.
+                        </p>
+                        <img id="comparisonVisualization" src="" alt="Hash comparison" class="full-width-img">
+                    </div>
+                </div>
+
+                <!-- Card Info Tab -->
+                <div id="cardinfo-tab" class="tab-content">
+                    <div class="info-box">
+                        <h3>📝 Complete Card Details</h3>
+                        <pre id="cardJsonDetails" class="json-display"></pre>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- Instructions -->
+            <section class="instructions">
+                <h2>How to Use</h2>
+                <div class="steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <h4>Start This Server</h4>
+                        <p>You're already using this server at http://localhost:5000</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <h4>Run OhMyOhMy.py</h4>
+                        <p>Process a card image with OhMyOhMy.py script</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <h4>Click Refresh</h4>
+                        <p>Click the "🔄 Refresh Data" button above to load the card visualization</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <h4>Explore Results</h4>
+                        <p>Click tabs to see different visualizations (Hash, Comparison, Details)</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">5</div>
+                        <h4>Process Another Card</h4>
+                        <p>Run OhMyOhMy.py again with a different card image</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">6</div>
+                        <h4>Refresh Again</h4>
+                        <p>Click "🔄 Refresh Data" to see the new card's analysis</p>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <footer>
+            <p>🃏 MTG Card Recognition System | Live Visualization Server</p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

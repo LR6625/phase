@@ -1,0 +1,27 @@
+# Versions are approximate. They come from the original requirements.txt and from
+# the training log; the project was never packaged, and I haven't re-tested a clean install.
+# Python 3.11 on Windows 11 was used.
+
+# Vision / hashing
+opencv-python>=4.8
+numpy>=1.24,<2
+Pillow>=10.0
+imagehash>=4.3
+annoy>=1.17
+matplotlib>=3.7
+
+# Card locator (YOLOv8 oriented bounding boxes)
+ultralytics>=8.3
+torch>=2.0
+
+# Hardware + I/O
+pyserial>=3.5
+openpyxl>=3.1
+requests>=2.31
+
+# Expo display (Flask)
+Flask>=2.3
+Flask-Cors>=4.0
+
+# Not on PyPI: ArducamEvkSDK is only needed for hardware_tests/camera.py
+# and hardware_tests/cameratest.py (the Arducam camera experiments).

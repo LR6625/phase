@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>MTG Hashing Expo - Immersive Mode</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Chakra+Petch:wght@400;500;600;700&family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body data-mode="adult">
+  <div class="bg-layer bg-layer-a"></div>
+  <div class="bg-layer bg-layer-b"></div>
+  <div class="bg-grid"></div>
+
+  <header class="hero hero-adult">
+    <div class="hero-orb orb-a"></div>
+    <div class="hero-orb orb-b"></div>
+    <div class="hero-top">
+      <div>
+        <p id="kickerText" class="kicker">Magic: The Gathering Identification Engine</p>
+        <h1 id="heroTitle">P.H.A.S.E. Console</h1>
+      </div>
+      <nav class="mode-nav">
+        <button id="langEnBtn" class="mode-link active" type="button">EN</button>
+        <button id="langFrBtn" class="mode-link" type="button">FR</button>
+      </nav>
+    </div>
+    <p id="heroSubText" class="hero-sub">A high-impact breakdown of camera capture, hash generation, segmented matching, and confidence scoring.</p>
+    <div class="hero-actions">
+      <button id="updateBtn" class="btn-primary">Update Example</button>
+      <a id="detectionPageLink" class="mode-link" href="/detection-localization">Detection &amp; Localization</a>
+      <div class="status-pill"><span class="dot"></span><span id="statusText">Waiting for a matched card...</span></div>
+      <div class="web-mini-controls" aria-label="Machine controls">
+        <button class="web-mini-btn" type="button" data-web-control="q" title="Mode select (q)">q</button>
+        <button class="web-mini-btn" type="button" data-web-control="a" title="Automatic mode (a)">a</button>
+        <button class="web-mini-btn" type="button" data-web-control="s" title="Manual mode (s)">s</button>
+        <button class="web-mini-btn" type="button" data-web-control="r" title="Demo auto mode (r)">r</button>
+        <button class="web-mini-btn" type="button" data-web-control="esc" title="Exit process (ESC)">esc</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="dashboard">
+    <section class="panel spotlight">
+      <div class="panel-header">
+        <h2 id="summaryTitle">Live Match Summary</h2>
+        <a id="scryfallLink" href="#" target="_blank" rel="noopener" class="text-link">Open Scryfall Page</a>
+      </div>
+      <div class="metric-grid">
+        <article class="metric-card"><p id="labelCardName" class="metric-label">Card Name</p><p class="metric-value" id="cardName">-</p></article>
+        <article class="metric-card"><p id="labelSet" class="metric-label">Set</p><p class="metric-value" id="cardSet">-</p></article>
+        <article class="metric-card"><p id="labelOrientation" class="metric-label">Orientation</p><p class="metric-value" id="cardOrientation">-</p></article>
+        <article class="metric-card"><p id="labelDistance" class="metric-label">Distance</p><p class="metric-value" id="cardDistance">-</p></article>
+        <article class="metric-card metric-card-price"><p id="labelPrice" class="metric-label">Price (CAD)</p><p class="metric-value" id="cardCad">-</p></article>
+        <article class="metric-card"><p id="labelSimilarity" class="metric-label">Similarity</p><p class="metric-value"><span id="similarityPercent">-</span>%</p></article>
+      </div>
+    </section>
+
+    <section class="panel compare-panel scryfall-compare-section">
+      <div class="panel-header">
+        <h2 id="compareTitle">Captured Card vs Scryfall Match</h2>
+        <span id="scryfallPriceBadge" class="price-badge">CAD -</span>
+      </div>
+      <div class="compare-grid">
+        <figure class="visual-card camera-source">
+          <figcaption id="captionCamera">Machine Capture (Cropped + Upright)</figcaption>
+          <img id="cameraImg" alt="Camera card capture" />
+        </figure>
+        <figure class="visual-card scryfall-source">
+          <figcaption id="captionScryfall">Scryfall Ground Truth</figcaption>
+          <img id="scryfallImg" alt="Scryfall match image" />
+        </figure>
+      </div>
+    </section>
+
+    <section class="panel stages-panel">
+      <div class="panel-header">
+        <h2 id="pipelineTitle">Hashing Pipeline Board</h2>
+        <p id="pipelineHint" class="hint">Rows are ordered for side-by-side science-fair explanation flow.</p>
+      </div>
+      <h3 id="rowScryfallTitle" class="row-title scryfall-row-title">Scryfall Steps 1-4 (Left to Right)</h3>
+      <div id="scryfallStepRow" class="pipeline-row scryfall-steps-zone"></div>
+
+      <h3 id="rowCameraTitle" class="row-title">Captured Image Steps 1-4 (Left to Right)</h3>
+      <div id="cameraStepRow" class="pipeline-row"></div>
+
+      <h3 id="rowCombinedTitle" class="row-title">Step 6 + Step 7: Grid Panels and Segment Hash Match Map</h3>
+      <div id="combinedStepRow" class="pipeline-row"></div>
+    </section>
+
+    <section class="panel confidence-panel">
+      <div class="panel-header"><h2 id="confidenceTitle">Confidence Reactor</h2></div>
+      <div class="confidence-layout">
+        <div class="meter-wrap">
+          <div class="meter-track">
+            <div id="confidenceFill" class="meter-fill"></div>
+          </div>
+          <p class="meter-value"><span id="confidenceScore">-</span>%</p>
+        </div>
+        <div class="confidence-stats">
+          <div><strong id="labelFinalScore">Final Score:</strong> <span id="confidenceFinalScore">-</span></div>
+          <div><strong id="labelWeightedMatches">Weighted Matches:</strong> <span id="confidenceWeighted">-</span></div>
+          <div><strong id="labelMatchedRegions">Matched Regions:</strong> <span id="confidenceRegions">-</span></div>
+          <div><strong id="labelStage1Distance">Stage-1 Distance:</strong> <span id="confidenceStage1">-</span></div>
+        </div>
+      </div>
+      <p id="confidenceExplain" class="hint">-</p>
+    </section>
+
+    <section class="panel hash-panel">
+      <div class="panel-header"><h2 id="hashTitle">64-Bit Hash Strings</h2></div>
+      <div class="hash-meta-grid">
+        <div class="hash-chip">
+          <p id="labelCapturedHashHex">Captured Hash (hex)</p>
+          <code id="cameraHashHex">-</code>
+        </div>
+        <div class="hash-chip">
+          <p id="labelScryfallHashHex">Scryfall Hash (hex)</p>
+          <code id="scryfallHashHex">-</code>
+        </div>
+        <div class="hash-chip">
+          <p id="labelHammingDistance">Hamming Distance</p>
+          <code id="hammingDistance">-</code>
+        </div>
+      </div>
+      <div class="binary-blocks">
+        <article>
+          <h3 id="labelCapturedBinary">Captured 64-Bit Binary</h3>
+          <pre id="cameraHashBits" class="json-box">-</pre>
+        </article>
+        <article>
+          <h3 id="labelScryfallBinary">Scryfall 64-Bit Binary</h3>
+          <pre id="scryfallHashBits" class="json-box">-</pre>
+        </article>
+      </div>
+    </section>
+
+    <section class="panel data-panel">
+      <div class="panel-header"><h2 id="pricePayloadTitle">Price Payload</h2></div>
+      <div class="data-layout">
+        <pre id="priceJson" class="json-box">{}</pre>
+        <article class="route-panel" id="routeGraphic">
+          <div class="route-title-row">
+            <h3 id="sortDirectionTitle">Sort Direction</h3>
+            <span id="routePrice" class="route-price">CAD -</span>
+          </div>
+          <p id="routeStatus" class="hint route-status">Waiting for card data...</p>
+          <div class="route-line">
+            <div class="route-arrow" id="routeArrow"></div>
+          </div>
+          <div class="route-stops">
+            <div class="route-stop" id="routeLeftStop">
+              <span id="routeLeftLabel" class="route-label">Left</span>
+              <small id="routeLeftSub">High Value</small>
+            </div>
+            <div class="route-stop" id="routeMiddleStop">
+              <span id="routeMiddleLabel" class="route-label">Middle</span>
+              <small id="routeMiddleSub">Low Value</small>
+            </div>
+            <div class="route-stop" id="routeRightStop">
+              <span id="routeRightLabel" class="route-label">Right</span>
+              <small id="routeRightSub">Unidentified</small>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

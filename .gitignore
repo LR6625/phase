@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+build/
+dist/
+*.egg-info/
+.ipynb_checkpoints/
+
+# Large generated data: download from the GitHub Release (see docs/DATABASE.md)
+/scryfall_segmented_tophalf_db_v2.json
+/scryfall_phash_db_sample*.json
+/phash_idx_to_card.json
+/phash_to_idx.json
+/phash_annoy_index.ann
+
+# Runtime output
+Identified_Cards/
+reallybugginme/
+Captured_Cards/
+Debugging Images/
+Image_storage/
+runs/
+gen_expo_visualization_files/data/latest_match.json
+gen_expo_visualization_files/data/control_command.json
+*.log
+
+# Model weights (the trained locator in models/ is the only one committed)
+*.pt
+!models/best.pt
+
+# Editors / tooling / OS junk
+.vscode/
+.idea/
+.claude/
+.gradio/
+.DS_Store
+Thumbs.db
+desktop.ini

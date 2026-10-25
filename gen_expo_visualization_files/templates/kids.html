@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>MTG Hashing Expo - Kids Hyper Mode</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Chakra+Petch:wght@400;500;600;700&family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body data-mode="kids">
+  <div class="bg-layer bg-layer-c"></div>
+  <div class="bg-layer bg-layer-d"></div>
+  <div class="bg-grid bg-grid-kids"></div>
+
+  <header class="hero hero-kids">
+    <div class="hero-top">
+      <div>
+        <p class="kicker">Explorer Mode</p>
+        <h1>Card Detective Playground</h1>
+      </div>
+      <nav class="mode-nav">
+        <a class="mode-link" href="/">Adult</a>
+        <a class="mode-link active" href="/kids">Kids</a>
+      </nav>
+    </div>
+    <p class="hero-sub">Press the button and watch the machine compare your card to the giant online card library.</p>
+    <div class="hero-actions">
+      <button id="updateBtn" class="btn-primary">Show New Card</button>
+      <div class="status-pill"><span class="dot"></span><span id="statusText">Waiting for a matched card...</span></div>
+    </div>
+  </header>
+
+  <main class="dashboard kids-layout">
+    <section class="panel kids-panel">
+      <div class="panel-header"><h2>What Did We Find?</h2></div>
+      <div class="metric-grid">
+        <article class="metric-card"><p class="metric-label">Card Name</p><p class="metric-value" id="cardName">-</p></article>
+        <article class="metric-card"><p class="metric-label">Set</p><p class="metric-value" id="cardSet">-</p></article>
+        <article class="metric-card"><p class="metric-label">Upright?</p><p class="metric-value" id="cardOrientation">-</p></article>
+        <article class="metric-card"><p class="metric-label">Price CAD</p><p class="metric-value" id="cardCad">-</p></article>
+      </div>
+      <p class="kids-link"><a id="scryfallLink" href="#" target="_blank" rel="noopener">See this card online</a></p>
+    </section>
+
+    <section class="panel kids-panel scryfall-compare-section">
+      <div class="panel-header"><h2>Our Camera vs The Library</h2></div>
+      <div class="compare-grid">
+        <figure class="visual-card camera-source">
+          <figcaption>Camera</figcaption>
+          <img id="cameraImg" alt="Camera card capture" />
+        </figure>
+        <figure class="visual-card scryfall-source">
+          <figcaption>Library Match</figcaption>
+          <img id="scryfallImg" alt="Scryfall card image" />
+        </figure>
+      </div>
+      <p class="kids-badge-row"><span id="scryfallPriceBadge" class="price-badge">CAD -</span></p>
+    </section>
+
+    <section class="panel kids-panel">
+      <div class="panel-header"><h2>How Sure Is The Machine?</h2></div>
+      <div class="meter-track kid-meter"><div id="confidenceFill" class="meter-fill"></div></div>
+      <p class="meter-value"><span id="confidenceScore">-</span>%</p>
+      <p id="confidenceExplain" class="hint">-</p>
+      <div class="confidence-stats kids-stats">
+        <div><strong>Score:</strong> <span id="confidenceFinalScore">-</span></div>
+        <div><strong>Matches:</strong> <span id="confidenceWeighted">-</span></div>
+        <div><strong>Regions:</strong> <span id="confidenceRegions">-</span></div>
+      </div>
+    </section>
+
+    <section class="panel kids-panel">
+      <div class="panel-header"><h2>Science Stage Gallery</h2></div>
+      <div id="stageGrid" class="stage-grid"></div>
+    </section>
+
+    <section class="panel hidden-debug">
+      <div class="panel-header"><h2>Hidden Data</h2></div>
+      <div class="summary-grid">
+        <div><span id="cardDistance">-</span></div>
+        <div><span id="cameraHashHex">-</span></div>
+        <div><span id="scryfallHashHex">-</span></div>
+        <div><span id="hammingDistance">-</span></div>
+        <div><span id="similarityPercent">-</span></div>
+        <div><span id="confidenceStage1">-</span></div>
+      </div>
+      <pre id="cameraHashBits" class="json-box">-</pre>
+      <pre id="scryfallHashBits" class="json-box">-</pre>
+      <pre id="priceJson" class="json-box">{}</pre>
+    </section>
+  </main>
+
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
