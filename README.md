@@ -4,8 +4,6 @@
 
 ![P.H.A.S.E. mid-run, with a sorted card in the air](docs/images/phase_machine.jpg)
 
-*The machine mid-run. (Papers on the wall behind are blurred for privacy.)*
-
 ![Camera image of a card split into a 3x3 grid, with each cell's 64-bit hash compared against the database](gen_expo_visualization_files/data/assets/15_camera_grid_and_bits_panel.png)
 
 *A card as the camera sees it, split into the 3x3 grid used for matching. Each panel on the right is one cell's 64-bit hash; red squares are bits that differ from the database copy.*
@@ -42,11 +40,23 @@ For comparison, the commercial machines I found cost roughly CAD $3,800 to $44,0
 
 ## How it works
 
+### The machine, in three stages
+
+1. **Card release.** Cards sit in a holding area, up to 450 stacked vertically. A NEMA 17 stepper raises the platform they sit on, and a TT gear motor releases them one at a time once they reach the right height. Each card slides down into the imaging area.
+2. **Imaging.** The imaging area is closed off from most angles to keep harsh light out, with LED strips mounted at 45 degrees for diffuse, low-glare lighting. A servo stops the card in place and a USB camera photographs it. When the card has been identified, the servo lets it go into the distribution stage.
+3. **Distribution.** Under the imaging area, a carriage holds the card with another servo. A second NEMA 17 stepper drives the carriage sideways along a threaded rod until it is over the right storage box, the servo releases the card, and the carriage returns home. There are three boxes: two price ranges and one for cards that could not be identified.
+
+**Control.** The whole machine runs from one Arduino Uno driving five motors: two NEMA 17 steppers, two MG90S servos and one TT gear motor. The heavy computation (camera, detection, hashing, matching) runs on a laptop connected over USB. It was my first electronics project, so the wiring is not tidy.
+
+### The details
+
 **Mechanism.** An Arduino runs the hardware (`firmware/FinalSketch.ino`): two stepper motors (DRV8825 drivers), a DC gear motor (L298N driver), MG90S servos and a limit switch. The Python program sends it plain-text serial commands such as `SPIN_CW:M1:<steps>`. One mechanism releases a card into the imaging area; another moves over the storage boxes (about 2050 steps between boxes) and drops the card in.
 
-**Finding the card.** A YOLOv8 oriented-bounding-box model (`models/best.pt`, trained on my own photos of cards in the machine) locates the card in the camera frame. The code then refines the edges and axis, rotates and crops the card to a flat, normalised image.
+**Finding the card.** A YOLOv8 oriented-bounding-box model (`models/best.pt`) locates the card in the camera frame. It was trained on about 1,400 of my own photos of cards in the machine (training ran for 133 epochs, as far as it could reasonably go). The model has two jobs: check whether a card is under the camera, which it did with 100% accuracy in my training results, and estimate where it is, which it does with about 93% localisation accuracy. A frame is checked about every half second.
 
-**Identifying the card.** Matching is by perceptual hashing, in two stages:
+About 93% is not tight enough for hashing, which needs a very close crop. So the code adds a contrast-masking step: it samples the background colour above and below the YOLO estimate and removes those colours from the image. That leaves a box on each side of the card, and the box edge touching the card gives the card's rotation. Knowing where the card is not tells the code where it is. Combined with YOLO's estimate, the card is rotated, cropped to a flat, normalised image and handed to the identification stage.
+
+**Identifying the card.** Matching is by perceptual hashing. A perceptual hash turns an image into a short bit pattern (here 64 bits, which you can picture as an 8x8 grid of black and white squares, a bit like a QR code) that stays similar when the image looks similar. I made one for every Magic printing in Scryfall, so identifying a card means finding its closest match among about 100,000 candidates, in two stages:
 
 1. *Shortlist.* A 64-bit pHash of the whole card is looked up in an [Annoy](https://github.com/spotify/annoy) nearest-neighbour index of every card in Scryfall, keeping up to 1,000 candidates.
 2. *Re-rank.* The top 55% of the card is split into a 3x3 grid; each cell has its own pHash and dHash. Candidates are scored by how many cells match within a Hamming-distance threshold, with the centre (artwork) cells weighted most. Both card orientations are tried. The result is "confident", "possible" (with a ranked list of alternatives) or no match.
@@ -129,7 +139,7 @@ archive/                older versions and experiments, kept for reference
 
 ## Status and credits
 
-Started in 2024 and built over about a year at Champlain College Lennoxville (CEGEP), as my 4th-semester Integrative Project. It's a student project: the main script grew organically, and some old experiments are kept in `archive/` rather than cleaned up. I'm now studying engineering at the University of Toronto, and this project is what got me into it.
+Started in 2024 and built over about a year at Champlain College Lennoxville (CEGEP), as my 4th-semester Integrative Project. It's a student project: the main script grew organically, and some old experiments are kept in `archive/` rather than cleaned up. As a first project it is full of inefficiencies and unnecessary costs, which is part of how I learned; if I can build it, you can build your own first project. I'm now studying engineering at the University of Toronto, and this project is what got me into it.
 
 Project write-up and build details: [P.H.A.S.E. on Ark](https://ark-stem.com/projects/8181e7dd-df1d-4867-8a4c-5f822db34515).
 
